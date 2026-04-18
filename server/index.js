@@ -3,7 +3,12 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    process.env.CLIENT_URL  // your Vercel URL — added later
+  ]
+}));
 app.use(express.json());
 
 // Routes
