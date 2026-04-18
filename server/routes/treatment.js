@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
+
 // Generate and save a treatment plan
 router.post('/generate', async (req, res) => {
   const {
@@ -32,6 +33,31 @@ router.post('/generate', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+
+// Get a treatment plan by ID with instructions
+router.get('/:id', async (req, res) => {
+  try {
+    const plan = await pool.query(
+      'SELECT * FROM treatment_plans WHERE id=$1', [req.params.id]
+    );
+    if (plan.rows.length === 0) {
+      return res.status(404).json({ error: 'Treatment plan not found.' });
+    }
+    const drug = await pool.query(
+      'SELECT name FROM drugs WHERE id=$1', [plan.rows[0].drug_id]
+    );
+    const instructions = generateOwnerInstructions({
+      ...plan.rows[0],
+      drug_name: drug.rows[0]?.name
+    });
+
+    res.json({ plan: plan.rows[0], instructions });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 function generateOwnerInstructions(plan) {
   const freqMap = { SID: 'once daily', BID: 'twice daily', TID: 'three times daily' };
