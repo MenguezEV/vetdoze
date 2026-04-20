@@ -1,10 +1,8 @@
 const pool = require('../db');
 
-// THE MAIN FEATURE: Precision Drug Dosage Calculator
 const calculateDose = async (req, res) => {
-  const { species, breed_id, weight_kg, drug_id, formulation_id } = req.body;
+  const { species, breed_id, weight_kg, drug_id, formulation_id, selected_dose_mg_per_kg } = req.body;
 
-  // Input validation
   if (!species || !weight_kg || !drug_id) {
     return res.status(400).json({ error: 'Species, weight, and drug are required.' });
   }
@@ -13,7 +11,6 @@ const calculateDose = async (req, res) => {
   }
 
   try {
-    // 1. Get dosage range for this drug + species
     const dosageResult = await pool.query(
       `SELECT * FROM dosage_ranges WHERE drug_id=$1 AND species=$2`,
       [drug_id, species]
@@ -23,19 +20,23 @@ const calculateDose = async (req, res) => {
     }
     const dosage = dosageResult.rows[0];
 
-    // 2. Calculate dose in mg
     const minDose = weight_kg * dosage.min_dose_mg_per_kg;
     const maxDose = weight_kg * dosage.max_dose_mg_per_kg;
-    const recommendedDose = weight_kg * ((dosage.min_dose_mg_per_kg + dosage.max_dose_mg_per_kg) / 2);
 
-    // 3. Calculate volume if formulation is provided
+    // Use vet-selected dose from slider, fallback to midpoint
+    const selectedRate = selected_dose_mg_per_kg
+      ? parseFloat(selected_dose_mg_per_kg)
+      : (parseFloat(dosage.min_dose_mg_per_kg) + parseFloat(dosage.max_dose_mg_per_kg)) / 2;
+
+    const recommendedDose = weight_kg * selectedRate;
+
+    // Volume calculation
     let volumeResult = null;
-    let formulation = null;
     if (formulation_id) {
       const formResult = await pool.query(
         `SELECT * FROM formulations WHERE id=$1`, [formulation_id]
       );
-      formulation = formResult.rows[0];
+      const formulation = formResult.rows[0];
       if (formulation) {
         if (formulation.form === 'tablet') {
           volumeResult = {
@@ -51,7 +52,7 @@ const calculateDose = async (req, res) => {
       }
     }
 
-    // 4. Check breed-specific warnings
+    // Breed warnings
     let warnings = [];
     if (breed_id) {
       const warnResult = await pool.query(
@@ -64,7 +65,6 @@ const calculateDose = async (req, res) => {
       warnings = warnResult.rows;
     }
 
-    // 5. Get drug info
     const drugResult = await pool.query(`SELECT * FROM drugs WHERE id=$1`, [drug_id]);
     const drug = drugResult.rows[0];
 
@@ -76,6 +76,7 @@ const calculateDose = async (req, res) => {
         min_dose_mg: parseFloat(minDose.toFixed(3)),
         max_dose_mg: parseFloat(maxDose.toFixed(3)),
         recommended_dose_mg: parseFloat(recommendedDose.toFixed(3)),
+        selected_rate_mg_per_kg: selectedRate
       },
       administration: volumeResult,
       schedule: {
@@ -83,7 +84,7 @@ const calculateDose = async (req, res) => {
         frequency: dosage.frequency,
         duration_notes: dosage.duration_notes,
       },
-      warnings: warnings,
+      warnings,
       source: dosage.source
     });
 
