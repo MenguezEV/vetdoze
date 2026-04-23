@@ -18,37 +18,114 @@ export default function Login() {
       localStorage.setItem('vetdoze_user', JSON.stringify(res.data.user));
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed.');
+      setError(err.response?.data?.error || 'Login failed. Check your credentials.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-16">
-      <h1 className="text-2xl font-bold text-teal-800 mb-6 text-center">Sign in to VetDoze</h1>
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-          <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-            required placeholder="you@example.com"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+    <div style={{
+      minHeight: 'calc(100vh - 64px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: '#F7F8F3', padding: '40px 16px',
+    }}>
+      <div style={{ width: '100%', maxWidth: '420px' }}>
+
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{
+            width: '56px', height: '56px', borderRadius: '16px',
+            background: 'linear-gradient(135deg, #3B2F8F, #5A4DB8)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '24px', margin: '0 auto 16px',
+          }}>🐾</div>
+          <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#1A1A2E', margin: '0 0 6px' }}>
+            Welcome back
+          </h1>
+          <p style={{ fontSize: '14px', color: '#6B6B80', margin: 0 }}>
+            Sign in to your VetDoze account
+          </p>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})}
-            required placeholder="••••••••"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400"/>
+
+        {/* Card */}
+        <div style={{
+          background: 'white', borderRadius: '20px',
+          border: '1px solid #E2E4D0', padding: '32px',
+        }}>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block', fontSize: '13px', fontWeight: '600',
+                color: '#6B6B80', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em'
+              }}>Email address</label>
+              <input
+                type="email" value={form.email} required
+                onChange={e => setForm({ ...form, email: e.target.value })}
+                placeholder="you@example.com"
+                style={{
+                  width: '100%', border: '1.5px solid #E2E4D0', borderRadius: '10px',
+                  padding: '11px 14px', fontSize: '14px', fontFamily: 'inherit',
+                  color: '#1A1A2E', background: 'white', outline: 'none', transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#8B9D00'}
+                onBlur={e => e.target.style.borderColor = '#E2E4D0'}
+              />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{
+                display: 'block', fontSize: '13px', fontWeight: '600',
+                color: '#6B6B80', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em'
+              }}>Password</label>
+              <input
+                type="password" value={form.password} required
+                onChange={e => setForm({ ...form, password: e.target.value })}
+                placeholder="••••••••"
+                style={{
+                  width: '100%', border: '1.5px solid #E2E4D0', borderRadius: '10px',
+                  padding: '11px 14px', fontSize: '14px', fontFamily: 'inherit',
+                  color: '#1A1A2E', background: 'white', outline: 'none', transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.target.style.borderColor = '#8B9D00'}
+                onBlur={e => e.target.style.borderColor = '#E2E4D0'}
+              />
+            </div>
+
+            {error && (
+              <div style={{
+                background: '#FCEBEB', border: '1px solid #F7C1C1',
+                borderRadius: '10px', padding: '12px 14px',
+                fontSize: '13px', color: '#A32D2D', marginBottom: '16px'
+              }}>
+                {error}
+              </div>
+            )}
+
+            <button type="submit" disabled={loading} style={{
+              width: '100%', background: '#8B9D00', color: 'white',
+              border: 'none', borderRadius: '10px', padding: '13px',
+              fontSize: '15px', fontWeight: '700', cursor: 'pointer',
+              fontFamily: 'inherit', transition: 'background 0.2s',
+              opacity: loading ? 0.6 : 1,
+            }}>
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
+          </form>
+
+          <div style={{
+            borderTop: '1px solid #E2E4D0', marginTop: '24px', paddingTop: '20px',
+            textAlign: 'center',
+          }}>
+            <p style={{ fontSize: '14px', color: '#6B6B80', margin: 0 }}>
+              Don't have an account?{' '}
+              <Link to="/register" style={{ color: '#8B9D00', fontWeight: '600', textDecoration: 'none' }}>
+                Create one
+              </Link>
+            </p>
+          </div>
         </div>
-        {error && <p className="text-red-600 text-sm">{error}</p>}
-        <button type="submit" disabled={loading}
-          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50">
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
-        <p className="text-center text-sm text-gray-500">
-          No account? <Link to="/register" className="text-teal-600 hover:underline">Register here</Link>
-        </p>
-      </form>
+      </div>
     </div>
   );
 }

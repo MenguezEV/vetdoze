@@ -12,8 +12,8 @@ import Register from './pages/Register';
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <div style={{ minHeight: '100vh', background: '#F7F8F3', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <Navbar />
         <Routes>
           <Route path="/"           element={<Home />} />
           <Route path="/calculator" element={<Calculator />} />
@@ -24,7 +24,7 @@ export default function App() {
           <Route path="/login"      element={<Login />} />
           <Route path="/register"   element={<Register />} />
         </Routes>
-      </main>
+      </div>
     </BrowserRouter>
   );
 }
