@@ -66,16 +66,6 @@ export default function Register() {
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <img
-            src="/logo-text.png"
-            alt="VETDOZE"
-            style={{
-              height: '48px', width: 'auto', objectFit: 'contain',
-              marginBottom: '12px',
-              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
-            }}
-            onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
-          />
           <span style={{
             display: 'none', fontSize: '28px', fontWeight: '900', color: '#F5C300',
             fontFamily: "'Plus Jakarta Sans', sans-serif", letterSpacing: '0.04em',

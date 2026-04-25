@@ -61,21 +61,6 @@ export default function Login() {
 
         {/* VetDoze logo — text wordmark */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <img
-            src="/logo-text.png"
-            alt="VETDOZE"
-            style={{
-              height: '48px',
-              width: 'auto',
-              objectFit: 'contain',
-              marginBottom: '12px',
-              filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))',
-            }}
-            onError={e => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'block';
-            }}
-          />
           {/* Fallback text */}
           <span style={{
             display: 'none',
