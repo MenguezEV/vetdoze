@@ -1,12 +1,12 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { path: '/',           label: 'Home',           icon: '🏠', roles: ['vet','student','owner'] },
-  { path: '/calculator', label: 'Calculator',     icon: '💊', roles: ['vet','student'] },
-  { path: '/drugs',      label: 'Drug Info',      icon: '📖', roles: ['vet','student','owner'] },
-  { path: '/treatment',  label: 'Treatment Plans',icon: '📋', roles: ['vet'] },
-  { path: '/student',    label: 'Practice Mode',  icon: '🎓', roles: ['student'] },
-  { path: '/owner',      label: "My Pet's Plan",  icon: '🐾', roles: ['owner'] },
+  { path: '/',           label: 'Home',           icon: '', roles: ['vet','student','owner'] },
+  { path: '/calculator', label: 'Calculator',     icon: '', roles: ['vet','student'] },
+  { path: '/drugs',      label: 'Drug Info',      icon: '', roles: ['vet','student','owner'] },
+  { path: '/treatment',  label: 'Treatment Plans',icon: '', roles: ['vet'] },
+  { path: '/student',    label: 'Practice Mode',  icon: '', roles: ['student'] },
+  { path: '/owner',      label: "My Pet's Plan",  icon: '', roles: ['owner'] },
 ];
 
 export default function Sidebar() {

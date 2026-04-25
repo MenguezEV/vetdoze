@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 
 const features = [
-  { icon:'💊', title:'Precision Dosage Calculator',  desc:'Accurate dose computation by weight, breed, and drug class.',      link:'/calculator', roles:['vet','student'] },
-  { icon:'📋', title:'Treatment Plan Generator',     desc:'Generate complete schedules with clear owner instructions.',         link:'/treatment',  roles:['vet'] },
-  { icon:'🎓', title:'Student Practice Mode',        desc:'Realistic clinical cases with instant feedback.',                   link:'/student',    roles:['student'] },
-  { icon:'📖', title:'Drug Information',             desc:'Quick-access drug descriptions and breed-specific warnings.',       link:'/drugs',      roles:['vet','student','owner'] },
-  { icon:'🐾', title:'Pet Owner View',               desc:'Simplified treatment instructions for pet owners.',                 link:'/owner',      roles:['owner'] },
-  { icon:'⚠️', title:'Breed Sensitivity Flags',     desc:'Automatic MDR1 and breed-specific drug interaction warnings.',      link:'/calculator', roles:['vet','student'] },
+  { icon:'', title:'Precision Dosage Calculator',  desc:'Accurate dose computation by weight, breed, and drug class.',      link:'/calculator', roles:['vet','student'] },
+  { icon:'', title:'Treatment Plan Generator',     desc:'Generate complete schedules with clear owner instructions.',         link:'/treatment',  roles:['vet'] },
+  { icon:'', title:'Student Practice Mode',        desc:'Realistic clinical cases with instant feedback.',                   link:'/student',    roles:['student'] },
+  { icon:'', title:'Drug Information',             desc:'Quick-access drug descriptions and breed-specific warnings.',       link:'/drugs',      roles:['vet','student','owner'] },
+  { icon:'', title:'Pet Owner View',               desc:'Simplified treatment instructions for pet owners.',                 link:'/owner',      roles:['owner'] },
+  { icon:'', title:'Breed Sensitivity Flags',     desc:'Automatic MDR1 and breed-specific drug interaction warnings.',      link:'/calculator', roles:['vet','student'] },
 ];
 
 export default function Home() {
