@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 
 export default function DrugInfo() {
-  const [drugs, setDrugs] = useState([]);
+  const [drugs, setDrugs]     = useState([]);
   const [selected, setSelected] = useState(null);
-  const [detail, setDetail] = useState(null);
+  const [detail, setDetail]   = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     api.get('/drugs').then(r => setDrugs(r.data)).catch(() => {});
@@ -12,65 +13,233 @@ export default function DrugInfo() {
 
   const loadDrug = async (id) => {
     setSelected(id);
-    const res = await api.get(`/drugs/${id}`);
-    setDetail(res.data);
+    setLoading(true);
+    try {
+      const res = await api.get(`/drugs/${id}`);
+      setDetail(res.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-teal-800 mb-2">Drug Information</h1>
-      <p className="text-gray-500 text-sm mb-6">Quick-access drug descriptions and usage guidelines.</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-          <h2 className="font-semibold text-gray-700 mb-3">Select a Drug</h2>
-          <ul className="space-y-2">
+    <div style={{ maxWidth:'860px', margin:'0 auto', padding:'40px 32px' }}>
+
+      {/* Header */}
+      <div style={{ marginBottom:'32px' }}>
+        <h1 style={{ fontSize:'28px', fontWeight:'800', color:'#1A1A2E', margin:'0 0 6px' }}>
+          Drug Information
+        </h1>
+        <p style={{ fontSize:'14px', color:'#6B6B80', margin:0 }}>
+          Quick-access descriptions, usage guidelines, and breed-specific warnings.
+        </p>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'220px 1fr', gap:'20px', alignItems:'start' }}>
+
+        {/* Drug list */}
+        <div style={{
+          background:'white', border:'1px solid #E2E4D0',
+          borderRadius:'16px', overflow:'hidden',
+        }}>
+          <div style={{
+            padding:'14px 16px', borderBottom:'1px solid #E2E4D0',
+            background:'#F7F8F3',
+          }}>
+            <p style={{ fontSize:'11px', fontWeight:'700', color:'#8B9D00',
+              textTransform:'uppercase', letterSpacing:'0.08em', margin:0 }}>
+              Select a drug
+            </p>
+          </div>
+          <ul style={{ listStyle:'none', padding:'8px', margin:0 }}>
             {drugs.map(d => (
               <li key={d.id}>
-                <button onClick={() => loadDrug(d.id)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm transition
-                    ${selected === d.id ? 'bg-teal-600 text-white' : 'hover:bg-gray-100 text-gray-700'}`}>
-                  {d.name}
-                  <span className={`ml-2 text-xs ${selected === d.id ? 'text-teal-100' : 'text-gray-400'}`}>
+                <button onClick={() => loadDrug(d.id)} style={{
+                  width:'100%', textAlign:'left', padding:'10px 12px',
+                  borderRadius:'10px', cursor:'pointer', fontFamily:'inherit',
+                  background: selected === d.id ? '#F4F6DC' : 'transparent',
+                  border: selected === d.id ? '1px solid #C8D800' : '1px solid transparent',
+                  transition:'all 0.15s',
+                }}
+                  onMouseEnter={e => { if (selected !== d.id) e.currentTarget.style.background = '#F7F8F3'; }}
+                  onMouseLeave={e => { if (selected !== d.id) e.currentTarget.style.background = 'transparent'; }}
+                >
+                  <p style={{ fontSize:'13px', fontWeight:'700',
+                    color: selected === d.id ? '#5A6600' : '#1A1A2E', margin:'0 0 2px' }}>
+                    {d.name}
+                  </p>
+                  <p style={{ fontSize:'11px', color:'#8B9D00', margin:0,
+                    background:'#F4F6DC', display:'inline-block', padding:'1px 7px',
+                    borderRadius:'8px', fontWeight:'600' }}>
                     {d.drug_class}
-                  </span>
+                  </p>
                 </button>
               </li>
             ))}
           </ul>
         </div>
+
+        {/* Detail panel */}
         <div>
-          {detail ? (
-            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-3">
-              <h2 className="text-lg font-bold text-teal-800">{detail.name}</h2>
-              <p className="text-xs text-gray-400 uppercase tracking-wide">{detail.drug_class}</p>
-              <p className="text-sm text-gray-700">{detail.description}</p>
-              {detail.mechanism && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase mb-1">Mechanism</p>
-                  <p className="text-sm text-gray-700">{detail.mechanism}</p>
-                </div>
-              )}
-              {detail.contraindications && (
-                <div className="bg-red-50 border border-red-100 rounded-lg p-3">
-                  <p className="text-xs font-semibold text-red-600 uppercase mb-1">Contraindications</p>
-                  <p className="text-sm text-red-700">{detail.contraindications}</p>
-                </div>
-              )}
-              {detail.dosage_ranges?.length > 0 && (
-                <div>
-                  <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Dosage Ranges</p>
-                  {detail.dosage_ranges.map((d, i) => (
-                    <div key={i} className="text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2 mb-1">
-                      <span className="capitalize font-medium">{d.species}</span>: {d.min_dose_mg_per_kg}–{d.max_dose_mg_per_kg} mg/kg
-                      <span className="text-gray-400 ml-2">({d.route}, {d.frequency})</span>
-                    </div>
-                  ))}
-                </div>
-              )}
+          {loading && (
+            <div style={{
+              background:'white', border:'1px solid #E2E4D0',
+              borderRadius:'16px', padding:'48px', textAlign:'center',
+            }}>
+              <p style={{ color:'#6B6B80', fontSize:'14px' }}>Loading...</p>
             </div>
-          ) : (
-            <div className="bg-gray-50 border border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-400 text-sm">
-              Select a drug to view details
+          )}
+
+          {!loading && !detail && (
+            <div style={{
+              background:'white', border:'2px dashed #E2E4D0',
+              borderRadius:'16px', padding:'48px', textAlign:'center',
+            }}>
+              <div style={{
+                width:'56px', height:'56px', borderRadius:'16px', background:'#F4F6DC',
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:'24px', margin:'0 auto 16px',
+              }}>📖</div>
+              <p style={{ fontSize:'14px', color:'#6B6B80', margin:0 }}>
+                Select a drug from the list to view details
+              </p>
+            </div>
+          )}
+
+          {!loading && detail && (
+            <div style={{
+              background:'white', border:'1px solid #E2E4D0',
+              borderRadius:'16px', overflow:'hidden',
+            }}>
+              {/* Drug header */}
+              <div style={{
+                padding:'24px', borderBottom:'1px solid #E2E4D0',
+                background:'linear-gradient(135deg,#3B2F8F,#5A4DB8)',
+              }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' }}>
+                  <div>
+                    <h2 style={{ fontSize:'22px', fontWeight:'800', color:'white', margin:'0 0 4px' }}>
+                      {detail.name}
+                    </h2>
+                    <span style={{
+                      fontSize:'11px', fontWeight:'700', color:'#C8D96A',
+                      background:'rgba(139,157,0,0.25)', padding:'2px 10px',
+                      borderRadius:'10px', textTransform:'uppercase', letterSpacing:'0.06em',
+                    }}>
+                      {detail.drug_class}
+                    </span>
+                  </div>
+                  {detail.generic_name && (
+                    <p style={{ fontSize:'12px', color:'rgba(255,255,255,0.6)', margin:0 }}>
+                      Generic: {detail.generic_name}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ padding:'24px' }}>
+
+                {/* Description */}
+                {detail.description && (
+                  <div style={{ marginBottom:'20px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:'700', color:'#8B9D00',
+                      textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 8px' }}>
+                      Description
+                    </p>
+                    <p style={{ fontSize:'14px', color:'#4A4A5A', lineHeight:'1.7', margin:0 }}>
+                      {detail.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Mechanism */}
+                {detail.mechanism && (
+                  <div style={{ marginBottom:'20px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:'700', color:'#8B9D00',
+                      textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 8px' }}>
+                      Mechanism of Action
+                    </p>
+                    <p style={{ fontSize:'14px', color:'#4A4A5A', lineHeight:'1.7', margin:0 }}>
+                      {detail.mechanism}
+                    </p>
+                  </div>
+                )}
+
+                {/* Contraindications */}
+                {detail.contraindications && (
+                  <div style={{
+                    background:'#FCEBEB', border:'1px solid #F7C1C1',
+                    borderRadius:'12px', padding:'16px', marginBottom:'20px',
+                  }}>
+                    <p style={{ fontSize:'11px', fontWeight:'700', color:'#A32D2D',
+                      textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 6px' }}>
+                      Contraindications
+                    </p>
+                    <p style={{ fontSize:'13px', color:'#791F1F', lineHeight:'1.6', margin:0 }}>
+                      {detail.contraindications}
+                    </p>
+                  </div>
+                )}
+
+                {/* Dosage ranges */}
+                {detail.dosage_ranges?.length > 0 && (
+                  <div style={{ marginBottom:'20px' }}>
+                    <p style={{ fontSize:'11px', fontWeight:'700', color:'#8B9D00',
+                      textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 10px' }}>
+                      Dosage Ranges
+                    </p>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+                      {detail.dosage_ranges.map((d,i) => (
+                        <div key={i} style={{
+                          background:'#F7F8F3', borderRadius:'10px',
+                          padding:'12px 16px', display:'flex',
+                          justifyContent:'space-between', alignItems:'center',
+                          border:'1px solid #E2E4D0',
+                        }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                            <span style={{
+                              fontSize:'12px', fontWeight:'700', color:'#3B2F8F',
+                              background:'#EEEDFE', padding:'2px 10px', borderRadius:'10px',
+                              textTransform:'capitalize',
+                            }}>{d.species}</span>
+                            <span style={{ fontSize:'13px', color:'#6B6B80' }}>
+                              via <strong style={{ color:'#1A1A2E' }}>{d.route}</strong> · {d.frequency}
+                            </span>
+                          </div>
+                          <span style={{ fontSize:'14px', fontWeight:'700', color:'#1A1A2E' }}>
+                            {d.min_dose_mg_per_kg}–{d.max_dose_mg_per_kg} mg/kg
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Formulations */}
+                {detail.formulations?.length > 0 && (
+                  <div>
+                    <p style={{ fontSize:'11px', fontWeight:'700', color:'#8B9D00',
+                      textTransform:'uppercase', letterSpacing:'0.08em', margin:'0 0 10px' }}>
+                      Available Formulations
+                    </p>
+                    <div style={{ display:'flex', gap:'8px', flexWrap:'wrap' }}>
+                      {detail.formulations.map((f,i) => (
+                        <div key={i} style={{
+                          background:'#F4F6DC', borderRadius:'10px',
+                          padding:'8px 14px', border:'1px solid #C8D800',
+                        }}>
+                          <p style={{ fontSize:'12px', fontWeight:'700', color:'#5A6600', margin:'0 0 2px', textTransform:'capitalize' }}>
+                            {f.form}
+                          </p>
+                          <p style={{ fontSize:'13px', color:'#6B7A00', margin:0, fontWeight:'600' }}>
+                            {f.concentration}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
