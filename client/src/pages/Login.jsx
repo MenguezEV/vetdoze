@@ -57,10 +57,7 @@ export default function Login() {
       }}>
         {/* Logo area */}
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <img src="/logo-text.png" alt="VETDOZE"
-            style={{ height: '32px', width: 'auto', objectFit: 'contain', marginBottom: '16px' }}
-            onError={e => { e.target.style.display = 'none'; }}
-          />
+          
           <h1 style={{ fontSize: '22px', fontWeight: '800', color: 'white', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
             Welcome back
           </h1>
