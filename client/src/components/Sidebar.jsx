@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 
 const navItems = [
   { path: '/',           label: 'Home',           icon: '🏠', roles: ['vet','student','owner'] },
-  { path: '/calculator', label: 'Calculator',     icon: '🧮', roles: ['vet','student'] },
+  { path: '/calculator', label: 'Calculator',     icon: '🧮', roles: ['vet'] },
   { path: '/drugs',      label: 'Drug Info',      icon: '💊', roles: ['vet','student','owner'] },
   { path: '/treatment',  label: 'Treatment Plans',icon: '📋', roles: ['vet'] },
   { path: '/student',    label: 'Practice Mode',  icon: '🎓', roles: ['student'] },
